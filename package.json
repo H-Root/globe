@@ -1,0 +1,19 @@
+{
+  "name": "lucidly-globe",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "vite": "^5.4.1"
+  },
+  "dependencies": {
+    "d3": "^7.9.0",
+    "globe.gl": "^2.32.5",
+    "three": "^0.168.0"
+  }
+}
