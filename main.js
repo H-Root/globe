@@ -12,6 +12,14 @@ const markerSvg = (lat, lng) => `<svg id="animate" viewBox="-4 0 36 36">
     <path data-lat="${lat}" data-lng="${lng}" fill="currentColor" d="M14,0 C21.732,0 28,5.641 28,12.6 C28,23.963 14,36 14,36 C14,36 0,24.064 0,12.6 C0,5.641 6.268,0 14,0 Z"></path>
   </svg>`;
 
+function inBoundingBox(bottomLeft, topRight, point) {
+	let isLongInRange;
+	let isLatiInRange;
+	isLongInRange = point.lon >= bottomLeft.lon && point.lon <= topRight.lon;
+	isLatiInRange = point.lat >= bottomLeft.lat && point.lat <= topRight.lat;
+	return isLongInRange && isLatiInRange;
+}
+
 const cords = [
 	{ lat: 40.71427, long: -74.00597, name: "New York" },
 	{ lat: 38.89511, long: -77.03637, name: "Washington D.C." },
@@ -49,13 +57,10 @@ const world = Globe()
 	.polygonsData(data.features)
 	.lineHoverPrecision(0)
 
-	// .polygonCapColor("#10b650")
-
 	.polygonCapColor(() => "#10b650")
 
 	.polygonAltitude(0.009)
 
-	// .polygonCapColor((feat) => colorScale(getVal(feat)))
 	.polygonSideColor(() => "#00000000")
 	.backgroundColor("#00000000")
 	// .polygonLabel(
@@ -68,12 +73,19 @@ const world = Globe()
 	.onPolygonHover((hoverD) =>
 		world
 			.polygonAltitude((d) => {
+				console.log({ d, hoverD });
 				return d === hoverD ? 0.04 : 0.009;
 			})
-			.polygonCapColor((d) =>
-				// d === hoverD ? "steelblue" : colorScale(getVal(d))
-				d === hoverD ? "#fe3c3b" : "#10b650"
-			)
+			.polygonCapColor((d) => {
+				if (d === hoverD) {
+					console.log("hovering");
+					world.pauseAnimation();
+					return "#fe3c3b";
+				} else {
+					world.resumeAnimation();
+					return "#10b650";
+				}
+			})
 	)
 	.polygonStrokeColor(() => "#111")
 	.htmlElementsData(gData)
@@ -142,6 +154,7 @@ globeMaterial.opacity = 0.6;
 
 world.controls().autoRotate = true;
 world.controls().autoRotateSpeed = 1.8;
+world.controls().enableZoom = false;
 
 btn.forEach((element) => {
 	element.addEventListener("click", (e) => {
@@ -152,6 +165,39 @@ btn.forEach((element) => {
 			lng: +e.target.getAttribute("data-lng"),
 			name: +e.target.getAttribute("data-name"),
 		};
+
+		world
+			.polygonAltitude((d) => {
+				console.log({ d });
+				// return d === hoverD ? 0.04 : 0.009;
+				if (
+					inBoundingBox(
+						{ lon: d.bbox[0], lat: d.bbox[1] },
+						{ lon: d.bbox[2], lat: d.bbox[3] },
+						{ lon: temp.lng, lat: temp.lat }
+					)
+				) {
+					return 0.04;
+				}
+				// console.log(
+
+				// );
+				return 0.009;
+			})
+			.polygonCapColor((d) => {
+				if (
+					inBoundingBox(
+						{ lon: d.bbox[0], lat: d.bbox[1] },
+						{ lon: d.bbox[2], lat: d.bbox[3] },
+						{ lon: temp.lng, lat: temp.lat }
+					)
+				) {
+					return "#fe3c3b";
+				} else {
+					return "#10b650";
+				}
+			});
+
 		if (selected.lat === temp.lat && selected.lng === temp.lng) {
 			world.pointOfView(
 				{
