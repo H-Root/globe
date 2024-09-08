@@ -121,10 +121,6 @@ btn.forEach((element) => {
 			name: +e.target.getAttribute("data-name"),
 		};
 		if (selected.lat === temp.lat && selected.lng === temp.lng) {
-			selected = {};
-		} else {
-			selected.lat = temp.lat;
-			selected.lng = temp.lng;
 			world.pointOfView(
 				{
 					lat: temp.lat,
@@ -133,10 +129,28 @@ btn.forEach((element) => {
 				},
 				1000
 			);
+			selected = {};
+			setTimeout(() => {
+				btn.forEach((item) => (item.disabled = null));
+				world.resumeAnimation();
+			}, 1000);
+		} else {
+			// world.polygon
+			selected.lat = temp.lat;
+			selected.lng = temp.lng;
+			world.pointOfView(
+				{
+					lat: temp.lat,
+					lng: temp.lng,
+					altitude: 1,
+				},
+				1000
+			);
 			setTimeout(() => {
 				btn.forEach((item) => (item.disabled = null));
 				world.pauseAnimation();
 			}, 1000);
 		}
+		
 	});
 });

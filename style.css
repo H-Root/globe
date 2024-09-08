@@ -19,9 +19,3 @@
 .overflow-hidden {
 	overflow: hidden;
 }
-
-#globeViz {
-  position: relative;
-	width: calc((100dvw / 3) * 2);
-  padding-top: 100px;
-}
