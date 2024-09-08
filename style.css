@@ -1,5 +1,27 @@
 * {
-  padding: 0px;
-  margin: 0px;
-  overflow: hidden;
+	padding: 0px;
+	margin: 0px;
+}
+
+.flex {
+	display: flex;
+	align-items: center;
+}
+
+.flex-1 {
+	flex: 1;
+}
+
+.overflow-visible {
+	overflow: visible;
+}
+
+.overflow-hidden {
+	overflow: hidden;
+}
+
+#globeViz {
+  position: relative;
+	width: calc((100dvw / 3) * 2);
+  padding-top: 100px;
 }
