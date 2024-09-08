@@ -1,5 +1,6 @@
 import Globe from "globe.gl";
 import { data } from "./ne_110m_admin_0_countries";
+import * as turf from "@turf/turf";
 
 let selected = { lat: 0, lng: 0, name: "" };
 
@@ -23,7 +24,7 @@ function inBoundingBox(bottomLeft, topRight, point) {
 const cords = [
 	{ lat: 40.71427, long: -74.00597, name: "New York" },
 	{ lat: 38.89511, long: -77.03637, name: "Washington D.C." },
-	{ lat: 34.88902, long: 35.88659, name: "Tartous" },
+	{ lat: 34.88902, long: 37, name: "Tartous" },
 	{ lat: 25.0657, long: 55.17128, name: "Dubai" },
 	{ lat: 25.33737, long: 55.41206, name: "Sharjah" },
 ];
@@ -70,23 +71,21 @@ const world = Globe()
 	//     Population: <i>${d.POP_EST}</i>
 	//   `
 	// )
-	.onPolygonHover((hoverD) =>
-		world
-			.polygonAltitude((d) => {
-				console.log({ d, hoverD });
-				return d === hoverD ? 0.04 : 0.009;
-			})
-			.polygonCapColor((d) => {
-				if (d === hoverD) {
-					console.log("hovering");
-					world.pauseAnimation();
-					return "#fe3c3b";
-				} else {
-					world.resumeAnimation();
-					return "#10b650";
-				}
-			})
-	)
+	// .onPolygonHover((hoverD) =>
+	// 	world
+	// 		.polygonAltitude((d) => {
+	// 			return d === hoverD ? 0.04 : 0.009;
+	// 		})
+	// 		.polygonCapColor((d) => {
+	// 			if (d === hoverD) {
+	// 				world.pauseAnimation();
+	// 				return "#fe3c3b";
+	// 			} else {
+	// 				world.resumeAnimation();
+	// 				return "#10b650";
+	// 			}
+	// 		})
+	// )
 	.polygonStrokeColor(() => "#111")
 	.htmlElementsData(gData)
 	.htmlElement((d) => {
@@ -98,8 +97,6 @@ const world = Globe()
 		el.style["pointer-events"] = "auto";
 		el.style.cursor = "pointer";
 		el.onclick = (e) => {
-			console.log(e.target.getAttribute("data-lat"));
-
 			world.resumeAnimation();
 			btn.forEach((item) => (item.disabled = true));
 
@@ -139,6 +136,33 @@ const world = Globe()
 					world.pauseAnimation();
 				}, 1000);
 			}
+
+			world
+				.polygonAltitude((d) => {
+					console.log(selected);
+					if (selected.lat) {
+						const point = turf.point([selected.lng, selected.lat]);
+						const isInside = turf.booleanPointInPolygon(point, d);
+
+						if (isInside) {
+							return 0.04;
+						}
+					}
+
+					return 0.009;
+				})
+				.polygonCapColor((d) => {
+					if (selected.lat) {
+						const point = turf.point([selected.lng, selected.lat]);
+						const isInside = turf.booleanPointInPolygon(point, d);
+
+						if (isInside) {
+							return "#fe3c3b";
+						}
+					} else {
+						return "#10b650";
+					}
+				});
 		};
 		return el;
 	})(document.getElementById("globeViz"));
@@ -154,7 +178,7 @@ globeMaterial.opacity = 0.6;
 
 world.controls().autoRotate = true;
 world.controls().autoRotateSpeed = 1.8;
-world.controls().enableZoom = false;
+// world.controls().enableZoom = false;
 
 btn.forEach((element) => {
 	element.addEventListener("click", (e) => {
@@ -168,30 +192,28 @@ btn.forEach((element) => {
 
 		world
 			.polygonAltitude((d) => {
-				console.log({ d });
-				// return d === hoverD ? 0.04 : 0.009;
-				if (
-					inBoundingBox(
-						{ lon: d.bbox[0], lat: d.bbox[1] },
-						{ lon: d.bbox[2], lat: d.bbox[3] },
-						{ lon: temp.lng, lat: temp.lat }
-					)
-				) {
+				const point = turf.point([temp.lng, temp.lat]);
+				const isInside = turf.booleanPointInPolygon(point, d);
+
+				if (isInside) {
 					return 0.04;
 				}
-				// console.log(
 
-				// );
+				// if (
+				// 	inBoundingBox(
+				// 		{ lon: d.bbox[0], lat: d.bbox[1] },
+				// 		{ lon: d.bbox[2], lat: d.bbox[3] },
+				// 		{ lon: temp.lng, lat: temp.lat }
+				// 	)
+				// ) {
+				// }
 				return 0.009;
 			})
 			.polygonCapColor((d) => {
-				if (
-					inBoundingBox(
-						{ lon: d.bbox[0], lat: d.bbox[1] },
-						{ lon: d.bbox[2], lat: d.bbox[3] },
-						{ lon: temp.lng, lat: temp.lat }
-					)
-				) {
+				const point = turf.point([temp.lng, temp.lat]);
+				const isInside = turf.booleanPointInPolygon(point, d);
+
+				if (isInside) {
 					return "#fe3c3b";
 				} else {
 					return "#10b650";
