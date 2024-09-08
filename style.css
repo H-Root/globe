@@ -19,3 +19,12 @@
 .overflow-hidden {
 	overflow: hidden;
 }
+
+#animate {
+	transition: all;
+	transition-duration: 1000ms;
+	-webkit-transition: all;
+	-moz-transition: all;
+	-ms-transition: all;
+	-o-transition: all;
+}

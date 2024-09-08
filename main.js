@@ -8,9 +8,8 @@ let selected = { lat: 0, lng: 0, name: "" };
 // const getVal = (feat) =>
 // 	feat.properties.GDP_MD_EST / Math.max(1e5, feat.properties.POP_EST);
 
-const markerSvg = `<svg viewBox="-4 0 36 36">
-    <path fill="currentColor" d="M14,0 C21.732,0 28,5.641 28,12.6 C28,23.963 14,36 14,36 C14,36 0,24.064 0,12.6 C0,5.641 6.268,0 14,0 Z"></path>
-    <circle fill="black" cx="14" cy="14" r="7"></circle>
+const markerSvg = (lat, lng) => `<svg id="animate" viewBox="-4 0 36 36">
+    <path data-lat="${lat}" data-lng="${lng}" fill="currentColor" d="M14,0 C21.732,0 28,5.641 28,12.6 C28,23.963 14,36 14,36 C14,36 0,24.064 0,12.6 C0,5.641 6.268,0 14,0 Z"></path>
   </svg>`;
 
 const cords = [
@@ -80,21 +79,54 @@ const world = Globe()
 	.htmlElementsData(gData)
 	.htmlElement((d) => {
 		const el = document.createElement("div");
-		el.innerHTML = markerSvg;
+		el.innerHTML = markerSvg(d.lat, d.lng);
 		el.style.color = d.color;
 		el.style.width = `${d.size}px`;
 
 		el.style["pointer-events"] = "auto";
 		el.style.cursor = "pointer";
-		el.onclick = () => {
-			world.pointOfView(
-				{
+		el.onclick = (e) => {
+			console.log(e.target.getAttribute("data-lat"));
+
+			world.resumeAnimation();
+			btn.forEach((item) => (item.disabled = true));
+
+			if (selected.lat == d.lat && selected.lng == d.lng) {
+				// animation class
+				// el.classList.remove();
+				world.pointOfView(
+					{
+						lat: d.lat,
+						lng: d.lng,
+						altitude: 2,
+					},
+					1000
+				);
+				setTimeout(() => {
+					btn.forEach((item) => (item.disabled = null));
+				}, 1000);
+				selected = {};
+			} else {
+				// animation class
+				// el.classList.add();
+				world.resumeAnimation();
+				world.pointOfView(
+					{
+						lat: d.lat,
+						lng: d.lng,
+						altitude: 1,
+					},
+					1000
+				);
+				selected = {
 					lat: d.lat,
 					lng: d.lng,
-					altitude: 0.9,
-				},
-				1000
-			);
+				};
+				setTimeout(() => {
+					btn.forEach((item) => (item.disabled = null));
+					world.pauseAnimation();
+				}, 1000);
+			}
 		};
 		return el;
 	})(document.getElementById("globeViz"));
@@ -151,6 +183,5 @@ btn.forEach((element) => {
 				world.pauseAnimation();
 			}, 1000);
 		}
-		
 	});
 });
