@@ -4,29 +4,18 @@ import * as turf from "@turf/turf";
 
 let selected = { lat: 0, lng: 0, name: "" };
 
-// import * as d3 from "d3";
-// const colorScale = d3.scaleSequentialSqrt(d3.interpolateYlOrRd);
-// const getVal = (feat) =>
-// 	feat.properties.GDP_MD_EST / Math.max(1e5, feat.properties.POP_EST);
-
 const markerSvg = (lat, lng) => `<svg id="animate" viewBox="-4 0 36 36">
     <path data-lat="${lat}" data-lng="${lng}" fill="currentColor" d="M14,0 C21.732,0 28,5.641 28,12.6 C28,23.963 14,36 14,36 C14,36 0,24.064 0,12.6 C0,5.641 6.268,0 14,0 Z"></path>
   </svg>`;
 
-function inBoundingBox(bottomLeft, topRight, point) {
-	let isLongInRange;
-	let isLatiInRange;
-	isLongInRange = point.lon >= bottomLeft.lon && point.lon <= topRight.lon;
-	isLatiInRange = point.lat >= bottomLeft.lat && point.lat <= topRight.lat;
-	return isLongInRange && isLatiInRange;
-}
-
 const cords = [
 	{ lat: 40.71427, long: -74.00597, name: "New York" },
-	{ lat: 38.89511, long: -77.03637, name: "Washington D.C." },
 	{ lat: 34.88902, long: 37, name: "Tartous" },
 	{ lat: 25.0657, long: 55.17128, name: "Dubai" },
-	{ lat: 25.33737, long: 55.41206, name: "Sharjah" },
+	{ lat: 45.46427, long: 9.18951, name: "Milan" },
+	{ lat: 50.11552, long: 8.68417, name: "Frankfurt" },
+	{ lat: 51.50853, long: -0.12574, name: "London" },
+	{ lat: 55.75222, long: 37.61556, name: "Moscow" },
 ];
 
 const button = (lat, lng, name) =>
@@ -44,48 +33,53 @@ const gData = cords.map((cord) => ({
 	lng: cord.long,
 	size: 30,
 	color: "#317bfe",
-	// color: ["red", "white", "blue", "green"][Math.round(Math.random() * 3)],
 }));
 
 const btn = document.querySelectorAll(".go-btn");
 
-const world = Globe()
+const world = Globe();
+
+const handleUpdateGlobe = (d = { lat: 0, lng: 0 }) => {
+	world
+		.polygonAltitude((dd) => {
+			if (d.lat) {
+				const point = turf.point([d.lng, d.lat]);
+				const isInside = turf.booleanPointInPolygon(point, dd);
+
+				if (isInside) {
+					console.log({ dd, d }, "Selecting");
+					return 0.04;
+				}
+				return 0.009;
+			}
+
+			return 0.009;
+		})
+		.polygonCapColor((dd) => {
+			if (d.lat) {
+				const point = turf.point([d.lng, d.lat]);
+				const isInside = turf.booleanPointInPolygon(point, dd);
+
+				if (isInside) {
+					return "#fe3c3b";
+				}
+				return "#10b650";
+			} else {
+				return "#10b650";
+			}
+		});
+};
+
+world
 	.lights([])
 	.globeImageUrl("//unpkg.com/three-globe/example/img/earth-night.jpg")
-	// .atmosphereColor("#00000000")
 	.showAtmosphere(false)
-
 	.polygonsData(data.features)
 	.lineHoverPrecision(0)
-
 	.polygonCapColor(() => "#10b650")
-
 	.polygonAltitude(0.009)
-
 	.polygonSideColor(() => "#00000000")
 	.backgroundColor("#00000000")
-	// .polygonLabel(
-	// 	({ properties: d }) => `
-	//     <b>${d.ADMIN} (${d.ISO_A2}):</b> <br />
-	//     GDP: <i>${d.GDP_MD_EST}</i> M$<br/>
-	//     Population: <i>${d.POP_EST}</i>
-	//   `
-	// )
-	// .onPolygonHover((hoverD) =>
-	// 	world
-	// 		.polygonAltitude((d) => {
-	// 			return d === hoverD ? 0.04 : 0.009;
-	// 		})
-	// 		.polygonCapColor((d) => {
-	// 			if (d === hoverD) {
-	// 				world.pauseAnimation();
-	// 				return "#fe3c3b";
-	// 			} else {
-	// 				world.resumeAnimation();
-	// 				return "#10b650";
-	// 			}
-	// 		})
-	// )
 	.polygonStrokeColor(() => "#111")
 	.htmlElementsData(gData)
 	.htmlElement((d) => {
@@ -101,8 +95,6 @@ const world = Globe()
 			btn.forEach((item) => (item.disabled = true));
 
 			if (selected.lat == d.lat && selected.lng == d.lng) {
-				// animation class
-				// el.classList.remove();
 				world.pointOfView(
 					{
 						lat: d.lat,
@@ -111,13 +103,12 @@ const world = Globe()
 					},
 					1000
 				);
+				handleUpdateGlobe({ lat: 0, lng: 0 });
 				setTimeout(() => {
 					btn.forEach((item) => (item.disabled = null));
 				}, 1000);
 				selected = {};
 			} else {
-				// animation class
-				// el.classList.add();
 				world.resumeAnimation();
 				world.pointOfView(
 					{
@@ -131,42 +122,18 @@ const world = Globe()
 					lat: d.lat,
 					lng: d.lng,
 				};
+				handleUpdateGlobe(selected);
 				setTimeout(() => {
 					btn.forEach((item) => (item.disabled = null));
 					world.pauseAnimation();
 				}, 1000);
 			}
-
-			world
-				.polygonAltitude((d) => {
-					console.log(selected);
-					if (selected.lat) {
-						const point = turf.point([selected.lng, selected.lat]);
-						const isInside = turf.booleanPointInPolygon(point, d);
-
-						if (isInside) {
-							return 0.04;
-						}
-					}
-
-					return 0.009;
-				})
-				.polygonCapColor((d) => {
-					if (selected.lat) {
-						const point = turf.point([selected.lng, selected.lat]);
-						const isInside = turf.booleanPointInPolygon(point, d);
-
-						if (isInside) {
-							return "#fe3c3b";
-						}
-					} else {
-						return "#10b650";
-					}
-				});
 		};
+
 		return el;
 	})(document.getElementById("globeViz"));
 
+//#region misc
 window.addEventListener("resize", (event) => {
 	world.width((event.target.innerWidth / 3) * 2);
 	world.height(event.target.innerHeight);
@@ -179,7 +146,9 @@ globeMaterial.opacity = 0.6;
 world.controls().autoRotate = true;
 world.controls().autoRotateSpeed = 1.8;
 // world.controls().enableZoom = false;
+//#endregion misc
 
+//#region button mapper
 btn.forEach((element) => {
 	element.addEventListener("click", (e) => {
 		btn.forEach((item) => (item.disabled = "true"));
@@ -189,36 +158,6 @@ btn.forEach((element) => {
 			lng: +e.target.getAttribute("data-lng"),
 			name: +e.target.getAttribute("data-name"),
 		};
-
-		world
-			.polygonAltitude((d) => {
-				const point = turf.point([temp.lng, temp.lat]);
-				const isInside = turf.booleanPointInPolygon(point, d);
-
-				if (isInside) {
-					return 0.04;
-				}
-
-				// if (
-				// 	inBoundingBox(
-				// 		{ lon: d.bbox[0], lat: d.bbox[1] },
-				// 		{ lon: d.bbox[2], lat: d.bbox[3] },
-				// 		{ lon: temp.lng, lat: temp.lat }
-				// 	)
-				// ) {
-				// }
-				return 0.009;
-			})
-			.polygonCapColor((d) => {
-				const point = turf.point([temp.lng, temp.lat]);
-				const isInside = turf.booleanPointInPolygon(point, d);
-
-				if (isInside) {
-					return "#fe3c3b";
-				} else {
-					return "#10b650";
-				}
-			});
 
 		if (selected.lat === temp.lat && selected.lng === temp.lng) {
 			world.pointOfView(
@@ -230,6 +169,8 @@ btn.forEach((element) => {
 				1000
 			);
 			selected = {};
+			handleUpdateGlobe({ lat: 0, lng: 0 });
+
 			setTimeout(() => {
 				btn.forEach((item) => (item.disabled = null));
 				world.resumeAnimation();
@@ -246,6 +187,7 @@ btn.forEach((element) => {
 				},
 				1000
 			);
+			handleUpdateGlobe(selected);
 			setTimeout(() => {
 				btn.forEach((item) => (item.disabled = null));
 				world.pauseAnimation();
@@ -253,3 +195,4 @@ btn.forEach((element) => {
 		}
 	});
 });
+//#endregion button mapper
