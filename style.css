@@ -3,9 +3,25 @@
 	margin: 0px;
 }
 
+.h-screen {
+	height: 100dvh;
+	overflow: hidden;
+}
+
 .flex {
 	display: flex;
+	flex-direction: column;
+}
+
+.align-center {
 	align-items: center;
+}
+
+@media (min-width: 768px) {
+	.flex {
+		display: flex;
+		flex-direction: row;
+	}
 }
 
 .flex-1 {
