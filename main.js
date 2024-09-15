@@ -1,9 +1,11 @@
 import Globe from "globe.gl";
 import { data } from "./ne_110m_admin_0_countries";
 import * as turf from "@turf/turf";
+import * as THREE from "three";
 
-// global state
+// global state/vars
 let selected = { lat: 0, lng: 0, name: "" };
+const world = Globe();
 
 // Elements
 const MarkerSvg = (lat, lng) => `<svg id="animate" viewBox="-4 0 36 36">
@@ -67,12 +69,12 @@ const handleUpdateGlobe = (d = { lat: 0, lng: 0 }) => {
 };
 
 const resizer = () => {
-	if (window.innerWidth > 768) {
-		world.width((window.innerWidth / 3) * 2);
-		world.height(window.innerHeight);
-	} else {
-		world.width(window.innerWidth);
-	}
+	// if (window.innerWidth > 768) {
+	// 	world.width((window.innerWidth / 3) * 2);
+	// 	world.height(window.innerHeight);
+	// } else {
+	world.width(window.innerWidth);
+	// }
 };
 
 const renderButtons = () => {
@@ -85,10 +87,6 @@ const renderButtons = () => {
 };
 
 const renderer = () => {
-	const world = Globe();
-
-	const btn = document.querySelectorAll(".go-btn");
-
 	world
 		.lights([])
 		.globeImageUrl("//unpkg.com/three-globe/example/img/earth-night.jpg")
@@ -98,10 +96,11 @@ const renderer = () => {
 		.polygonCapColor(() => "#10b650")
 		.polygonAltitude(0.009)
 		.polygonSideColor(() => "#00000000")
-		.backgroundColor("#f00")
+		// .backgroundColor("#f00")
 		.polygonStrokeColor(() => "#111")
 		.htmlElementsData(gData)
 		.htmlElement((d) => {
+			const btn = document.querySelectorAll(".go-btn");
 			const el = document.createElement("div");
 			el.innerHTML = MarkerSvg(d.lat, d.lng);
 			el.style.color = d.color;
@@ -153,19 +152,26 @@ const renderer = () => {
 		})(document.getElementById("globeViz"));
 
 	resizer();
+
 	const globeMaterial = world.globeMaterial();
 	globeMaterial.transparent = true;
 	globeMaterial.opacity = 1;
 
-	world.controls().autoRotate = true;
-	world.controls().autoRotateSpeed = 1.8;
 	world.controls().enableZoom = false;
+
+	const searchParams = new URLSearchParams(window.location.search);
+	if (searchParams.get("animate") == "1") {
+		world.controls().autoRotate = true;
+		world.controls().autoRotateSpeed = 1.8;
+	}
 };
 
-//#region button mapper
 const mapButtons = () => {
+	const btn = document.querySelectorAll(".go-btn");
+
 	btn.forEach((element) => {
 		element.addEventListener("click", (e) => {
+			console.log("clicked");
 			btn.forEach((item) => (item.disabled = "true"));
 			world.resumeAnimation();
 			const temp = {
@@ -211,15 +217,12 @@ const mapButtons = () => {
 		});
 	});
 };
-//#endregion button mapper
 
 const init = () => {
 	// render navigate around the world buttons
 	renderButtons();
 	// webGl renderer and globe configs
 	renderer();
-	// adding event listeners over the rendered buttons
-	mapButtons();
 	// listening to window resize to resize the globe
 	window.addEventListener("resize", () => {
 		resizer();
@@ -227,3 +230,4 @@ const init = () => {
 };
 
 init();
+mapButtons();

@@ -10,6 +10,13 @@
 
 .flex {
 	display: flex;
+}
+
+.flex-directional {
+	flex-direction: column;
+}
+
+.flex-col {
 	flex-direction: column;
 }
 
@@ -20,6 +27,8 @@
 @media (min-width: 768px) {
 	.flex {
 		display: flex;
+	}
+	.flex-directional {
 		flex-direction: row;
 	}
 }
@@ -36,6 +45,10 @@
 	overflow: hidden;
 }
 
+.relative {
+	position: relative;
+}
+
 #animate {
 	transition: all;
 	transition-duration: 1000ms;
@@ -43,4 +56,17 @@
 	-moz-transition: all;
 	-ms-transition: all;
 	-o-transition: all;
+}
+
+#globeViz {
+	width: 100dvw;
+	height: 100dvh;
+	position: absolute;
+	inset: 0px;
+	z-index: 0;
+}
+
+#fill-btns {
+	position: relative;
+	z-index: 2;
 }
