@@ -32,10 +32,10 @@
 		flex-direction: row;
 	}
 }
-
+/* 
 .flex-1 {
 	flex: 1;
-}
+} */
 
 .overflow-visible {
 	overflow: visible;
@@ -57,16 +57,107 @@
 	-ms-transition: all;
 	-o-transition: all;
 }
-
+/* 
 #globeViz {
 	width: 100dvw;
 	height: 100dvh;
 	position: absolute;
 	inset: 0px;
 	z-index: 0;
-}
+} */
 
 #fill-btns {
 	position: relative;
 	z-index: 2;
+}
+
+@import url("https://fonts.googleapis.com/css?family=Montserrat:400,700");
+
+body {
+	font-family: "Montserrat", sans-serif;
+	font-weight: 400;
+	background-color: #f6f6f6;
+	height: 100vh;
+}
+
+*:focus {
+	outline: none;
+}
+/* 
+.absCenter {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+} */
+
+.infoButton {
+	appearance: none;
+	border: 0;
+	background-color: transparent;
+	padding: 0;
+	margin: 0;
+	font-size: 14px;
+	position: relative;
+	width: 30px;
+	fill: #003882;
+	stroke: #003882;
+}
+
+.infoButton-btn {
+	appearance: none;
+	background-color: transparent;
+	border: 1px solid #003882;
+	border-radius: 10px;
+	width: 20px;
+	height: 20px;
+	color: #003882;
+	background-color: white;
+	font-weight: 700;
+	transform: rotate(-135deg);
+	transition: border-radius 200ms ease-in-out;
+}
+
+.infoButton-btn-text {
+	display: block;
+	text-align: center;
+	width: 20px;
+	height: 20px;
+	line-height: 20px;
+	transform: rotate(135deg);
+}
+
+.infoButton-container {
+	position: absolute;
+	bottom: 0;
+	right: calc(-100% + 60px);
+	top: 50%;
+	transform: scale(0) translate(-50%, -50%);
+	transition: transform 0ms linear 200ms;
+}
+
+.infoButton-container-message {
+	box-sizing: border-box;
+	width: 300px;
+	padding: 16px 20px;
+	font-size: 14px;
+	box-shadow: 0 1px 1px 0 rgba(black, 0.26);
+	border-radius: 4px;
+	line-height: 1.3;
+	text-align: left;
+	transform: translateX(10px);
+	opacity: 0;
+	transition: transform 200ms ease-in-out, opacity 200ms ease-in-out;
+	background-color: white;
+}
+
+.infoButton_isActive .infoButton-container {
+	transform: scale(1);
+	transition: transform 0ms linear;
+}
+
+.infoButton:focus .infoButton-container-message,
+.infoButton_isActive .infoButton-container-message {
+	transform: translate(0, -50%);
+	opacity: 1;
 }
