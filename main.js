@@ -40,7 +40,7 @@ const MarkerSvg = ({
 }) => `
 <button class="infoButton" data-name="${sub}">
 	<svg id="animate" viewBox="-4 0 36 36">
-		<path data-lat="${lat}" data-lng="${lng}" fill="${COLOR_CURSOR}" d="M14,0 C21.732,0 28,5.641 28,12.6 C28,23.963 14,36 14,36 C14,36 0,24.064 0,12.6 C0,5.641 6.268,0 14,0 Z"></path>
+		<path data-lat="${lat}" data-lng="${lng}" fill="${COLOR_CURSOR}" d="M14,0 C21.732,0 28,5.641 28,12.6 C28,23.1 14,36 14,36 C14,36 0,24.064 0,12.6 C0,5.641 6.268,0 14,0 Z"></path>
 	</svg>
 	<div class="infoButton-container" style="background-color: #f2f5f8">
 		<div class="infoButton-container-message" style="display: flex; flex-direction: column; gap: 10px; color: ${SELECTED_COLOR}">
@@ -102,7 +102,7 @@ const cords = [
 				flag: "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/AE.svg",
 			},
 			type: "Headquarters",
-			phone: "+963 123 123 123",
+			phone: "+1 123 123 123",
 			email: "ae.a@scagroup.net",
 			location: "Dubai, UAE",
 		},
@@ -117,7 +117,7 @@ const cords = [
 				flag: "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/IT.svg",
 			},
 			type: "Headquarters",
-			phone: "+963 123 123 123",
+			phone: "+1 123 123 123",
 			email: "it.a@scagroup.net",
 			location: "Milan, Italy",
 		},
@@ -132,7 +132,7 @@ const cords = [
 				flag: "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/DE.svg",
 			},
 			type: "Headquarters",
-			phone: "+963 123 123 123",
+			phone: "+1 123 123 123",
 			email: "de.a@scagroup.net",
 			location: "Frankfurt, Germany",
 		},
@@ -147,7 +147,7 @@ const cords = [
 				flag: "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/GB.svg",
 			},
 			type: "Headquarters",
-			phone: "+963 123 123 123",
+			phone: "+1 123 123 123",
 			email: "de.a@scagroup.net",
 			location: "London, United Kingdom",
 		},
@@ -162,7 +162,7 @@ const cords = [
 				flag: "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/RU.svg",
 			},
 			type: "Headquarters",
-			phone: "+963 123 123 123",
+			phone: "+1 123 123 123",
 			email: "ru.a@scagroup.net",
 			location: "Moscow, Russia",
 		},
@@ -177,7 +177,7 @@ const cords = [
 				flag: "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/AU.svg",
 			},
 			type: "Headquarters",
-			phone: "+963 123 123 123",
+			phone: "+1 123 123 123",
 			email: "au.a@scagroup.net",
 			location: "Sidney, Australia",
 		},
