@@ -93,21 +93,6 @@ const cords = [
 		},
 	},
 	{
-		lat: 34.88902,
-		long: 37,
-		name: "Tartous",
-		info: {
-			country: {
-				name: "Syria",
-				flag: "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/SY.svg",
-			},
-			type: "Headquarters",
-			phone: "+963 123 123 123",
-			email: "sy.a@scagroup.net",
-			location: "Tartous, Syria",
-		},
-	},
-	{
 		lat: 25.0657,
 		long: 55.17128,
 		name: "Dubai",
