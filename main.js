@@ -40,9 +40,14 @@ const MarkerSvg = ({
 }) => `
 <button class="infoButton" data-name="${sub}">
 	<svg id="animate" viewBox="-4 0 36 36">
-		<path data-lat="${lat}" data-lng="${lng}" fill="${COLOR_CURSOR}" d="M14,0 C21.732,0 28,5.641 28,12.6 C28,23.1 14,36 14,36 C14,36 0,24.064 0,12.6 C0,5.641 6.268,0 14,0 Z"></path>
+		<path 
+			data-lat="${lat}" 
+			data-lng="${lng}" 
+			fill="${COLOR_CURSOR}" 
+			d="M14,0 C21.732,0 28,5.641 28,12.6 C28,23.1 14,36 14,36 C14,36 0,24.064 0,12.6 C0,5.641 6.268,0 14,0 Z">
+		</path>
 	</svg>
-	<div class="infoButton-container" style="background-color: #f2f5f8">
+	<div class="infoButton-container">
 		<div class="infoButton-container-message" style="display: flex; flex-direction: column; gap: 10px; color: ${SELECTED_COLOR}">
 			<div style="display: flex; gap: 10px">
 				<img src="${flag}" alt="${name}" style="width: 40px; height: 40px; border-radius: 50%" />

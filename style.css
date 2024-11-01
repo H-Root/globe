@@ -71,26 +71,6 @@
 	z-index: 2;
 }
 
-@import url("https://fonts.googleapis.com/css?family=Montserrat:400,700");
-
-body {
-	font-family: "Montserrat", sans-serif;
-	font-weight: 400;
-	background-color: #f6f6f6;
-	height: 100vh;
-}
-
-*:focus {
-	outline: none;
-}
-/* 
-.absCenter {
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	transform: translate(-50%, -50%);
-} */
-
 .infoButton {
 	appearance: none;
 	border: 0;
@@ -104,36 +84,35 @@ body {
 	stroke: #003882;
 }
 
-.infoButton-btn {
-	appearance: none;
-	background-color: transparent;
-	border: 1px solid #003882;
-	border-radius: 10px;
-	width: 20px;
-	height: 20px;
-	color: #003882;
-	background-color: white;
-	font-weight: 700;
-	transform: rotate(-135deg);
-	transition: border-radius 200ms ease-in-out;
-}
-
-.infoButton-btn-text {
-	display: block;
-	text-align: center;
-	width: 20px;
-	height: 20px;
-	line-height: 20px;
-	transform: rotate(135deg);
-}
-
 .infoButton-container {
 	position: absolute;
-	bottom: 0;
-	right: calc(-100% + 60px);
-	top: 50%;
+	bottom: calc(-100% + 75px);
+	right: 50%;
 	transform: scale(0) translate(-50%, -50%);
 	transition: transform 0ms linear 200ms;
+}
+
+.infoButton:focus .infoButton-container-message,
+.infoButton_isActive .infoButton-container-message {
+	transform: translate(50%);
+	opacity: 1;
+}
+
+@media (min-width: 768px) {
+	.infoButton-container {
+		position: absolute;
+		bottom: 0;
+		right: calc(-100% + 60px);
+		top: 50%;
+		transform: scale(0) translate(-50%, -50%);
+		transition: transform 0ms linear 200ms;
+	}
+
+	.infoButton:focus .infoButton-container-message,
+	.infoButton_isActive .infoButton-container-message {
+		transform: translate(0, -50%);
+		opacity: 1;
+	}
 }
 
 .infoButton-container-message {
@@ -148,16 +127,10 @@ body {
 	transform: translateX(10px);
 	opacity: 0;
 	transition: transform 200ms ease-in-out, opacity 200ms ease-in-out;
-	background-color: white;
+	background-color: #f2f5f8;
 }
 
 .infoButton_isActive .infoButton-container {
 	transform: scale(1);
 	transition: transform 0ms linear;
-}
-
-.infoButton:focus .infoButton-container-message,
-.infoButton_isActive .infoButton-container-message {
-	transform: translate(0, -50%);
-	opacity: 1;
 }
