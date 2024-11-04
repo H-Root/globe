@@ -7,14 +7,20 @@ import * as turf from "@turf/turf";
 
 //#region Elements & Constants
 let selected = { lat: 0, lng: 0, name: "" };
-const world = Globe();
+const world = Globe({
+	rendererConfig: {
+		antialias: false,
+		precision: "highp",
+		powerPreference: "high-performance",
+	},
+});
 
 const COLORS_COUNTRIES = "#bec5cb";
 const COLOR_CURSOR = "#317bfe";
 const SELECTED_COLOR = "#003882";
 const RED_COLOR = "#b11116";
-const FOCUSED_HEIGHT = 0.04;
-const UN_FOCUS_HEIGHT = 0.009;
+const FOCUSED_HEIGHT = 0.007;
+const UN_FOCUS_HEIGHT = 0.007;
 
 // Elements
 // Me: Mama I want React.js
@@ -189,6 +195,36 @@ const cords = [
 	},
 ];
 
+function getDistance(lat1, lon1, lat2, lon2) {
+	const R = 6371; // Radius of Earth in kilometers
+	const dLat = (lat2 - lat1) * (Math.PI / 180);
+	const dLon = (lon2 - lon1) * (Math.PI / 180);
+	const a =
+		Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+		Math.cos(lat1 * (Math.PI / 180)) *
+			Math.cos(lat2 * (Math.PI / 180)) *
+			Math.sin(dLon / 2) *
+			Math.sin(dLon / 2);
+	const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+	return R * c;
+}
+
+// Function to find the closest office
+function findClosestOffice(userLat, userLon) {
+	let closestOffice = null;
+	let minDistance = Infinity;
+
+	for (const office of cords) {
+		const distance = getDistance(userLat, userLon, office.lat, office.long);
+		if (distance < minDistance) {
+			minDistance = distance;
+			closestOffice = office;
+		}
+	}
+
+	return closestOffice;
+}
+
 // Reshaping data
 const gData = cords.map((cord) => ({
 	lat: cord.lat,
@@ -237,6 +273,15 @@ const handleUpdateGlobe = (d = { lat: 0, lng: 0 }) => {
 const resizer = () => {
 	world.width(window.innerWidth);
 	world.height(window.innerHeight);
+	if (window.innerWidth < 768) {
+		world.pointOfView({
+			altitude: 3,
+		});
+	} else {
+		world.pointOfView({
+			altitude: 2
+		})
+	}
 };
 
 // pointer on map click helper
@@ -267,7 +312,7 @@ const handleButtonClick = (el, d) => {
 			{
 				lat: d.lat,
 				lng: d.lng,
-				altitude: 2,
+				altitude: 3,
 			},
 			1000
 		);
@@ -282,7 +327,7 @@ const handleButtonClick = (el, d) => {
 			{
 				lat: d.lat,
 				lng: d.lng,
-				altitude: 2,
+				altitude: 3,
 			},
 			1000
 		);
@@ -334,7 +379,7 @@ const renderer = () => {
 		.globeImageUrl("/earth.png")
 		.showAtmosphere(false)
 		.polygonsData(data.features)
-		.lineHoverPrecision(0)
+		.lineHoverPrecision(5)
 		.polygonCapColor(() => COLORS_COUNTRIES)
 		.polygonAltitude(UN_FOCUS_HEIGHT)
 		.polygonSideColor(() => "#00000000")
@@ -388,7 +433,7 @@ const mapButtons = () => {
 					{
 						lat: temp.lat,
 						lng: temp.lng,
-						altitude: 2,
+						altitude: 3,
 					},
 					1000
 				);
@@ -407,7 +452,7 @@ const mapButtons = () => {
 					{
 						lat: temp.lat,
 						lng: temp.lng,
-						altitude: 2,
+						altitude: 3,
 					},
 					1000
 				);
@@ -430,6 +475,26 @@ const init = () => {
 	window.addEventListener("resize", () => {
 		resizer();
 	});
+
+	if (navigator.geolocation) {
+		navigator.geolocation.getCurrentPosition(
+			(position) => {
+				const userLat = position.coords.latitude;
+				const userLon = position.coords.longitude;
+				const closestOffice = findClosestOffice(userLat, userLon);
+				console.log(`The closest office is in ${closestOffice.name}`);
+				// world.pointOfView({
+				// 	lat: closestOffice.lat,
+				// 	lng: closestOffice.long,
+				// });
+			},
+			(error) => {
+				console.error("Error getting location:", error);
+			}
+		);
+	} else {
+		console.log("Geolocation is not supported by this browser.");
+	}
 };
 
 init();
