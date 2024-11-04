@@ -21,6 +21,7 @@ const SELECTED_COLOR = "#003882";
 const RED_COLOR = "#b11116";
 const FOCUSED_HEIGHT = 0.007;
 const UN_FOCUS_HEIGHT = 0.007;
+let ALTITUDE = 2;
 
 // Elements
 // Me: Mama I want React.js
@@ -275,12 +276,14 @@ const resizer = () => {
 	world.height(window.innerHeight);
 	if (window.innerWidth < 768) {
 		world.pointOfView({
-			altitude: 3,
+			altitude: ALTITUDE,
 		});
+		ALTITUDE = 3;
 	} else {
 		world.pointOfView({
-			altitude: 2
-		})
+			altitude: ALTITUDE,
+		});
+		ALTITUDE = 2;
 	}
 };
 
@@ -312,7 +315,7 @@ const handleButtonClick = (el, d) => {
 			{
 				lat: d.lat,
 				lng: d.lng,
-				altitude: 3,
+				altitude: ALTITUDE,
 			},
 			1000
 		);
@@ -327,7 +330,7 @@ const handleButtonClick = (el, d) => {
 			{
 				lat: d.lat,
 				lng: d.lng,
-				altitude: 3,
+				altitude: ALTITUDE,
 			},
 			1000
 		);
@@ -433,7 +436,7 @@ const mapButtons = () => {
 					{
 						lat: temp.lat,
 						lng: temp.lng,
-						altitude: 3,
+						altitude: ALTITUDE,
 					},
 					1000
 				);
@@ -452,7 +455,7 @@ const mapButtons = () => {
 					{
 						lat: temp.lat,
 						lng: temp.lng,
-						altitude: 3,
+						altitude: ALTITUDE,
 					},
 					1000
 				);
@@ -472,6 +475,7 @@ const init = () => {
 	// webGl renderer and globe configs
 	renderer();
 	// listening to window resize to resize the globe
+	resizer();
 	window.addEventListener("resize", () => {
 		resizer();
 	});
