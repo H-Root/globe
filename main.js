@@ -487,10 +487,11 @@ const init = () => {
 				const userLon = position.coords.longitude;
 				const closestOffice = findClosestOffice(userLat, userLon);
 				console.log(`The closest office is in ${closestOffice.name}`);
-				// world.pointOfView({
-				// 	lat: closestOffice.lat,
-				// 	lng: closestOffice.long,
-				// });
+				world.pointOfView({
+					lat: closestOffice.lat,
+					lng: closestOffice.long,
+				});
+				handleUpdateGlobe({ lat: closestOffice.lat, lng: closestOffice.long });
 			},
 			(error) => {
 				console.error("Error getting location:", error);
