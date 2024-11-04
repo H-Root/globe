@@ -1,6 +1,7 @@
 import Globe from "globe.gl";
 import { data } from "./ne_110m_admin_0_countries";
 import * as turf from "@turf/turf";
+import { AmbientLight } from "three";
 
 // <script src="//unpkg.com/globe.gl"></script>
 // <script src="https://cdn.jsdelivr.net/npm/@turf/turf@7/turf.min.js"></script>
@@ -379,6 +380,7 @@ const renderButtons = () => {
 
 const renderer = () => {
 	world
+		.lights([new AmbientLight(0xffffff, 2.5)])
 		.globeImageUrl("/earth.png")
 		.showAtmosphere(false)
 		.polygonsData(data.features)
