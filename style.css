@@ -8,34 +8,16 @@
 	overflow: hidden;
 }
 
-.flex {
-	display: flex;
-}
-
 .flex-directional {
 	flex-direction: column;
 }
 
-.flex-col {
-	flex-direction: column;
-}
-
-.align-center {
-	align-items: center;
-}
-
 @media (min-width: 768px) {
-	.flex {
-		display: flex;
-	}
 	.flex-directional {
 		flex-direction: row;
 	}
 }
-/* 
-.flex-1 {
-	flex: 1;
-} */
+
 
 .overflow-visible {
 	overflow: visible;

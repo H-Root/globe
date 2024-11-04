@@ -273,18 +273,24 @@ const handleUpdateGlobe = (d = { lat: 0, lng: 0 }) => {
 };
 
 const resizer = () => {
-	world.width(window.innerWidth);
-	world.height(window.innerHeight);
 	if (window.innerWidth < 768) {
-		world.pointOfView({
-			altitude: ALTITUDE,
-		});
-		ALTITUDE = 3;
-	} else {
+		world.width(window.innerWidth);
+		world.height(window.innerHeight / 2);
 		world.pointOfView({
 			altitude: ALTITUDE,
 		});
 		ALTITUDE = 2;
+	} else {
+		if (window.innerWidth < 1067) {
+			ALTITUDE = 2.5;
+		} else {
+			ALTITUDE = 2;
+		}
+		world.width(window.innerWidth / 2);
+		world.height(window.innerHeight);
+		world.pointOfView({
+			altitude: ALTITUDE,
+		});
 	}
 };
 

@@ -8,13 +8,15 @@
 		<title>Vite App</title>
 	</head>
 	<body>
-		<div
-			class="flex flex-directional align-center overflow-hidden h-screen relative"
-		>
-			<div class="flex-1" style="height: 100%; align-self: stretch">
-				<div id="fill-btns" class="flex flex-col" style="width: fit-content;"></div>
+		<div style="display: flex; position: relative; overflow-x: hidden;" class="flex-directional">
+			<div style="height: 100%; align-self: stretch; width: 100%; flex: 1">
+				<div
+					id="fill-btns"
+					class="flex flex-col"
+					style="width: fit-content"
+				></div>
 			</div>
-			<div>
+			<div class="flex: 1;">
 				<div id="globeViz"></div>
 			</div>
 		</div>
