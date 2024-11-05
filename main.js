@@ -88,115 +88,6 @@ const Button = (lat, lng, name) =>
 //#endregion Elements
 
 // Coords for labels and navigation
-// todo set the coords here :)
-const cords = [
-	{
-		lat: 40.71427,
-		long: -74.00597,
-		name: "New York",
-		info: {
-			country: {
-				name: "United States of America",
-				flag: "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/US.svg",
-			},
-			type: "Headquarters",
-			phone: "+1 123 123 123",
-			email: "us.a@scagroup.net",
-			location: "New York, United States of America",
-		},
-	},
-	{
-		lat: 25.0657,
-		long: 55.17128,
-		name: "Dubai",
-		info: {
-			country: {
-				name: "United Arab Emirates",
-				flag: "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/AE.svg",
-			},
-			type: "Headquarters",
-			phone: "+1 123 123 123",
-			email: "ae.a@scagroup.net",
-			location: "Dubai, UAE",
-		},
-	},
-	{
-		lat: 45.46427,
-		long: 9.18951,
-		name: "Milan",
-		info: {
-			country: {
-				name: "Italy",
-				flag: "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/IT.svg",
-			},
-			type: "Headquarters",
-			phone: "+1 123 123 123",
-			email: "it.a@scagroup.net",
-			location: "Milan, Italy",
-		},
-	},
-	{
-		lat: 50.11552,
-		long: 8.68417,
-		name: "Frankfurt",
-		info: {
-			country: {
-				name: "Germany",
-				flag: "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/DE.svg",
-			},
-			type: "Headquarters",
-			phone: "+1 123 123 123",
-			email: "de.a@scagroup.net",
-			location: "Frankfurt, Germany",
-		},
-	},
-	{
-		lat: 51.50853,
-		long: -0.12574,
-		name: "London",
-		info: {
-			country: {
-				name: "United Kingdom",
-				flag: "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/GB.svg",
-			},
-			type: "Headquarters",
-			phone: "+1 123 123 123",
-			email: "de.a@scagroup.net",
-			location: "London, United Kingdom",
-		},
-	},
-	{
-		lat: 55.75222,
-		long: 37.61556,
-		name: "Moscow",
-		info: {
-			country: {
-				name: "Russia",
-				flag: "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/RU.svg",
-			},
-			type: "Headquarters",
-			phone: "+1 123 123 123",
-			email: "ru.a@scagroup.net",
-			location: "Moscow, Russia",
-		},
-	},
-	{
-		lat: -33.8688,
-		long: 151.2093,
-		name: "Sidney",
-		info: {
-			country: {
-				name: "Australia",
-				flag: "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/AU.svg",
-			},
-			type: "Headquarters",
-			phone: "+1 123 123 123",
-			email: "au.a@scagroup.net",
-			location: "Sidney, Australia",
-		},
-	},
-];
-
 function getDistance(lat1, lon1, lat2, lon2) {
 	const R = 6371; // Radius of Earth in kilometers
 	const dLat = (lat2 - lat1) * (Math.PI / 180);
@@ -212,7 +103,7 @@ function getDistance(lat1, lon1, lat2, lon2) {
 }
 
 // Function to find the closest office
-function findClosestOffice(userLat, userLon) {
+function findClosestOffice(userLat, userLon, cords) {
 	let closestOffice = null;
 	let minDistance = Infinity;
 
@@ -228,19 +119,6 @@ function findClosestOffice(userLat, userLon) {
 }
 
 // Reshaping data
-const gData = cords.map((cord) => ({
-	lat: cord.lat,
-	lng: cord.long,
-	size: 30,
-	color: COLOR_CURSOR,
-	flag: cord.info.country.flag,
-	name: cord.info.country.name,
-	email: cord.info.email,
-	phone: cord.info.phone,
-	location: cord.info.location,
-	type: cord.info.type,
-	sub: cord.name,
-}));
 
 const handleUpdateGlobe = (d = { lat: 0, lng: 0 }) => {
 	world
@@ -375,7 +253,7 @@ const handleToggleMenus = (nodeData) => {
 	}, 1000);
 };
 
-const renderButtons = () => {
+const renderButtons = (cords) => {
 	const btnContainer = document.getElementById("fill-btns");
 	btnContainer.innerHTML = cords
 		.map((cord) => {
@@ -384,7 +262,7 @@ const renderButtons = () => {
 		.join("");
 };
 
-const renderer = () => {
+const renderer = (gData) => {
 	world
 		.lights([new AmbientLight(0xffffff, 2.5)])
 		.globeImageUrl("/earth.png")
@@ -477,11 +355,25 @@ const mapButtons = () => {
 	});
 };
 
-const init = () => {
+const init = (cords) => {
 	// render navigate around the world buttons
-	renderButtons();
+	renderButtons(cords);
+	// shape data
+	const gData = cords.map((cord) => ({
+		lat: cord.lat,
+		lng: cord.long,
+		size: 30,
+		color: COLOR_CURSOR,
+		flag: cord.info.country.flag,
+		name: cord.info.country.name,
+		email: cord.info.email,
+		phone: cord.info.phone,
+		location: cord.info.location,
+		type: cord.info.type,
+		sub: cord.name,
+	}));
 	// webGl renderer and globe configs
-	renderer();
+	renderer(gData);
 	// listening to window resize to resize the globe
 	resizer();
 	window.addEventListener("resize", () => {
@@ -493,7 +385,7 @@ const init = () => {
 			(position) => {
 				const userLat = position.coords.latitude;
 				const userLon = position.coords.longitude;
-				const closestOffice = findClosestOffice(userLat, userLon);
+				const closestOffice = findClosestOffice(userLat, userLon, cords);
 				console.log(`The closest office is in ${closestOffice.name}`);
 				world.pointOfView({
 					lat: closestOffice.lat,
@@ -510,5 +402,111 @@ const init = () => {
 	}
 };
 
-init();
+init([
+	{
+		lat: 40.71427,
+		long: -74.00597,
+		name: "New York",
+		info: {
+			country: {
+				name: "United States of America",
+				flag: "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/US.svg",
+			},
+			type: "Headquarters",
+			phone: "+1 123 123 123",
+			email: "us.a@scagroup.net",
+			location: "New York, United States of America",
+		},
+	},
+	{
+		lat: 25.0657,
+		long: 55.17128,
+		name: "Dubai",
+		info: {
+			country: {
+				name: "United Arab Emirates",
+				flag: "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/AE.svg",
+			},
+			type: "Headquarters",
+			phone: "+1 123 123 123",
+			email: "ae.a@scagroup.net",
+			location: "Dubai, UAE",
+		},
+	},
+	{
+		lat: 45.46427,
+		long: 9.18951,
+		name: "Milan",
+		info: {
+			country: {
+				name: "Italy",
+				flag: "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/IT.svg",
+			},
+			type: "Headquarters",
+			phone: "+1 123 123 123",
+			email: "it.a@scagroup.net",
+			location: "Milan, Italy",
+		},
+	},
+	{
+		lat: 50.11552,
+		long: 8.68417,
+		name: "Frankfurt",
+		info: {
+			country: {
+				name: "Germany",
+				flag: "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/DE.svg",
+			},
+			type: "Headquarters",
+			phone: "+1 123 123 123",
+			email: "de.a@scagroup.net",
+			location: "Frankfurt, Germany",
+		},
+	},
+	{
+		lat: 51.50853,
+		long: -0.12574,
+		name: "London",
+		info: {
+			country: {
+				name: "United Kingdom",
+				flag: "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/GB.svg",
+			},
+			type: "Headquarters",
+			phone: "+1 123 123 123",
+			email: "de.a@scagroup.net",
+			location: "London, United Kingdom",
+		},
+	},
+	{
+		lat: 55.75222,
+		long: 37.61556,
+		name: "Moscow",
+		info: {
+			country: {
+				name: "Russia",
+				flag: "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/RU.svg",
+			},
+			type: "Headquarters",
+			phone: "+1 123 123 123",
+			email: "ru.a@scagroup.net",
+			location: "Moscow, Russia",
+		},
+	},
+	{
+		lat: -33.8688,
+		long: 151.2093,
+		name: "Sidney",
+		info: {
+			country: {
+				name: "Australia",
+				flag: "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/AU.svg",
+			},
+			type: "Headquarters",
+			phone: "+1 123 123 123",
+			email: "au.a@scagroup.net",
+			location: "Sidney, Australia",
+		},
+	},
+]);
 mapButtons();
