@@ -3,6 +3,7 @@ import { data } from "./ne_110m_admin_0_countries";
 import * as turf from "@turf/turf";
 import { AmbientLight } from "three";
 
+// todo add cdn files from here
 // <script src="//unpkg.com/globe.gl"></script>
 // <script src="https://cdn.jsdelivr.net/npm/@turf/turf@7/turf.min.js"></script>
 
@@ -118,8 +119,6 @@ function findClosestOffice(userLat, userLon, cords) {
 	return closestOffice;
 }
 
-// Reshaping data
-
 const handleUpdateGlobe = (d = { lat: 0, lng: 0 }) => {
 	world
 		.polygonAltitude((dd) => {
@@ -150,6 +149,9 @@ const handleUpdateGlobe = (d = { lat: 0, lng: 0 }) => {
 		});
 };
 
+// todo define media query
+// ! don't forget to set world width and height accordingly
+// & ALTITUDE is the the how far is the camera from the globe
 const resizer = () => {
 	if (window.innerWidth < 768) {
 		world.width(window.innerWidth);
@@ -404,6 +406,7 @@ const init = (cords) => {
 	mapButtons();
 };
 
+// todo add data here
 init([
 	{
 		lat: 40.71427,
