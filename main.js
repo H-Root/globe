@@ -84,8 +84,18 @@ const MarkerSvg = ({
 </button>
 `;
 
-const Button = (lat, lng, name) =>
-	`<button class="go-btn" data-lat="${lat}" data-lng="${lng}" data-name="${name}">Go To ${name}</button>`;
+const Button = (lat, lng, name, image) => `
+<button class="go-btn" data-lat="${lat}" data-lng="${lng}" data-name="${name}">
+	<img src="${image}" alt="${name}" data-lat="${lat}" data-lng="${lng}" data-name="${name}">
+	<span data-lat="${lat}" data-lng="${lng}" data-name="${name}">${name}</span>
+</button>
+`;
+
+const Select = (lat, lng, name) => `
+<option class="go-option" data-lat="${lat}" data-lng="${lng}" data-name="${name}">
+	${name}
+</option>
+`;
 //#endregion Elements
 
 // Coords for labels and navigation
@@ -259,9 +269,19 @@ const renderButtons = (cords) => {
 	const btnContainer = document.getElementById("fill-btns");
 	btnContainer.innerHTML = cords
 		.map((cord) => {
-			return Button(cord.lat, cord.long, cord.name);
+			return Button(cord.lat, cord.long, cord.name, cord.info.country.flag);
 		})
 		.join("");
+};
+
+const renderSelect = (cords) => {
+	const btnContainer = document.getElementById("fill-select");
+	btnContainer.innerHTML = [
+		`<option value="">Select Location</option>`,
+		...cords.map((cord) => {
+			return Select(cord.lat, cord.long, cord.name);
+		}),
+	].join("");
 };
 
 const renderer = (gData) => {
@@ -357,9 +377,115 @@ const mapButtons = () => {
 	});
 };
 
+const mapOptions = () => {
+	const select = document.getElementById("fill-select");
+
+	select.addEventListener("change", (e) => {
+		console.log(e);
+		select.disabled = "true";
+		world.resumeAnimation();
+
+		console.log(e.target.selectedOptions);
+
+		const temp = {
+			lat: +e.target.selectedOptions[0].getAttribute("data-lat"),
+			lng: +e.target.selectedOptions[0].getAttribute("data-lng"),
+			name: e.target.selectedOptions[0].getAttribute("data-name"),
+		};
+
+		handleToggleMenus(temp)
+
+		if (selected.lat === temp.lat && selected.lng === temp.lng) {
+			world.pointOfView(
+				{
+					lat: temp.lat,
+					lng: temp.lng,
+					altitude: ALTITUDE,
+				},
+				1000
+			);
+			selected = {};
+			handleUpdateGlobe({ lat: 0, lng: 0 });
+
+			setTimeout(() => {
+				select.disabled = null;
+				world.resumeAnimation();
+			}, 1000);
+		} else {
+			// world.polygon
+			selected.lat = temp.lat;
+			selected.lng = temp.lng;
+			world.pointOfView(
+				{
+					lat: temp.lat,
+					lng: temp.lng,
+					altitude: ALTITUDE,
+				},
+				1000
+			);
+			handleUpdateGlobe(selected);
+			setTimeout(() => {
+				select.disabled = null;
+				world.pauseAnimation();
+			}, 1000);
+		}
+	});
+
+	// btn.forEach((element) => {
+	// 	element.addEventListener("click", (e) => {
+	// 		btn.forEach((item) => (item.disabled = "true"));
+	// 		world.resumeAnimation();
+
+	// 		const temp = {
+	// 			lat: +e.target.getAttribute("data-lat"),
+	// 			lng: +e.target.getAttribute("data-lng"),
+	// 			name: e.target.getAttribute("data-name"),
+	// 		};
+
+	// 		handleToggleMenus(temp);
+
+	// 		if (selected.lat === temp.lat && selected.lng === temp.lng) {
+	// 			world.pointOfView(
+	// 				{
+	// 					lat: temp.lat,
+	// 					lng: temp.lng,
+	// 					altitude: ALTITUDE,
+	// 				},
+	// 				1000
+	// 			);
+	// 			selected = {};
+	// 			handleUpdateGlobe({ lat: 0, lng: 0 });
+
+	// 			setTimeout(() => {
+	// 				btn.forEach((item) => (item.disabled = null));
+	// 				world.resumeAnimation();
+	// 			}, 1000);
+	// 		} else {
+	// 			// world.polygon
+	// 			selected.lat = temp.lat;
+	// 			selected.lng = temp.lng;
+	// 			world.pointOfView(
+	// 				{
+	// 					lat: temp.lat,
+	// 					lng: temp.lng,
+	// 					altitude: ALTITUDE,
+	// 				},
+	// 				1000
+	// 			);
+	// 			handleUpdateGlobe(selected);
+	// 			setTimeout(() => {
+	// 				btn.forEach((item) => (item.disabled = null));
+	// 				world.pauseAnimation();
+	// 			}, 1000);
+	// 		}
+	// 	});
+	// });
+};
+
 const init = (cords) => {
 	// render navigate around the world buttons
 	renderButtons(cords);
+	renderSelect(cords);
 	// shape data
 	const gData = cords.map((cord) => ({
 		lat: cord.lat,
@@ -404,6 +530,7 @@ const init = (cords) => {
 	}
 
 	mapButtons();
+	mapOptions();
 };
 
 // todo add data here

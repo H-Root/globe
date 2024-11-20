@@ -8,13 +8,24 @@
 		<title>Vite App</title>
 	</head>
 	<body>
-		<div style="display: flex; position: relative; overflow-x: hidden;" class="flex-directional">
-			<div style="height: 100%; align-self: stretch; width: 100%; flex: 1">
-				<div
-					id="fill-btns"
-					class="flex flex-col"
-					style="width: fit-content"
-				></div>
+		<div
+			style="display: flex; position: relative; overflow-x: hidden"
+			class="flex-directional"
+		>
+			<div
+				style="
+					width: 100%;
+					flex: 1;
+					display: flex;
+					align-items: center;
+					justify-content: center;
+				"
+			>
+				<div id="fill-btns"></div>
+				<select name="countries" id="fill-select" style="margin-bottom: 20px;">
+					<!-- <option value="">Select Location</option>
+					<option value="USA">United States Of America</option> -->
+				</select>
 			</div>
 			<div class="flex: 1;">
 				<div id="globeViz"></div>
