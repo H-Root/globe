@@ -3,10 +3,6 @@ import { data } from "./ne_110m_admin_0_countries";
 import * as turf from "@turf/turf";
 import { AmbientLight } from "three";
 
-// todo add cdn files from here
-// <script src="//unpkg.com/globe.gl"></script>
-// <script src="https://cdn.jsdelivr.net/npm/@turf/turf@7/turf.min.js"></script>
-
 //#region Elements & Constants
 let selected = { lat: 0, lng: 0, name: "" };
 const world = Globe({
@@ -26,9 +22,9 @@ const UN_FOCUS_HEIGHT = 0.007;
 let ALTITUDE = 2;
 
 // Elements
-// Me: Mama I want React.js
-// Mama: We Have React.js At Home
-// React.js at home:
+// ? Me: Mama I want React.js
+// & Mama: We Have React.js At Home
+// * React.js at home: ;(
 const PHONE_ICON =
 	'<svg xmlns="http://www.w3.org/2000/svg" width="15px" height="15px" viewBox="0 0 56 56"><path fill="currentColor" d="M39.156 50.934c4.078 0 6.774-1.102 9.164-3.774c.188-.187.352-.398.54-.586c1.406-1.57 2.062-3.117 2.062-4.593c0-1.688-.984-3.258-3.07-4.712l-6.82-4.734c-2.11-1.453-4.571-1.617-6.54.328l-1.804 1.805c-.54.539-1.008.563-1.547.234c-1.242-.797-3.797-3.023-5.532-4.757c-1.828-1.805-3.609-3.82-4.523-5.297c-.328-.54-.281-.985.258-1.524l1.781-1.805c1.969-1.968 1.805-4.453.352-6.538l-4.758-6.82c-1.43-2.087-3-3.048-4.688-3.071c-1.476-.024-3.023.656-4.593 2.062c-.211.188-.399.352-.61.516c-2.648 2.39-3.75 5.086-3.75 9.14c0 6.704 4.125 14.86 11.696 22.43c7.523 7.524 15.703 11.696 22.382 11.696m.024-3.61c-5.977.117-13.64-4.476-19.711-10.523c-6.117-6.094-10.922-14.016-10.805-19.992c.047-2.579.938-4.805 2.79-6.399c.14-.14.28-.258.444-.375c.68-.61 1.454-.937 2.11-.937c.703 0 1.312.257 1.758.96l4.547 6.82c.492.727.539 1.548-.188 2.274l-2.062 2.063c-1.641 1.617-1.5 3.586-.328 5.156c1.335 1.805 3.656 4.43 5.437 6.211c1.805 1.805 4.64 4.336 6.445 5.695c1.57 1.172 3.563 1.29 5.18-.328l2.062-2.062c.727-.727 1.524-.68 2.25-.211l6.82 4.547c.704.468.985 1.054.985 1.758c0 .68-.328 1.43-.96 2.132a5.82 5.82 0 0 1-.352.446c-1.617 1.828-3.844 2.718-6.422 2.765"/></svg>';
 const EMAIL_ICON =
@@ -98,9 +94,8 @@ const Select = (lat, lng, name) => `
 `;
 //#endregion Elements
 
-// Coords for labels and navigation
 function getDistance(lat1, lon1, lat2, lon2) {
-	const R = 6371; // Radius of Earth in kilometers
+	const R = 6371;
 	const dLat = (lat2 - lat1) * (Math.PI / 180);
 	const dLon = (lon2 - lon1) * (Math.PI / 180);
 	const a =
@@ -113,7 +108,6 @@ function getDistance(lat1, lon1, lat2, lon2) {
 	return R * c;
 }
 
-// Function to find the closest office
 function findClosestOffice(userLat, userLon, cords) {
 	let closestOffice = null;
 	let minDistance = Infinity;
@@ -186,7 +180,6 @@ const resizer = () => {
 	}
 };
 
-// pointer on map click helper
 const handleButtonClick = (el, d) => {
 	const btn = document.querySelectorAll(".go-btn");
 	world.resumeAnimation();
@@ -245,7 +238,6 @@ const handleButtonClick = (el, d) => {
 	}
 };
 
-// btn click helper
 const handleToggleMenus = (nodeData) => {
 	setTimeout(() => {
 		const selectedElement = document.querySelector(
@@ -271,7 +263,7 @@ const renderButtons = (cords) => {
 	const btnContainer = document.getElementById("fill-btns");
 	btnContainer.innerHTML = cords
 		.map((cord) => {
-			return Button(cord.lat, cord.long, cord.name, cord.info.country.flag);
+			return Button(cord.latitude, cord.longitude, cord.name, cord.icon);
 		})
 		.join("");
 };
@@ -281,7 +273,7 @@ const renderSelect = (cords) => {
 	btnContainer.innerHTML = [
 		`<option value="">Select Location</option>`,
 		...cords.map((cord) => {
-			return Select(cord.lat, cord.long, cord.name);
+			return Select(cord.latitude, cord.longitude, cord.name);
 		}),
 	].join("");
 };
@@ -486,160 +478,68 @@ const mapOptions = () => {
 
 const init = (cords) => {
 	// render navigate around the world buttons
-	renderButtons(cords);
-	renderSelect(cords);
-	// shape data
-	const gData = cords.map((cord) => ({
-		lat: cord.lat,
-		lng: cord.long,
-		size: 30,
-		color: COLOR_CURSOR,
-		flag: cord.info.country.flag,
-		name: cord.info.country.name,
-		email: cord.info.email,
-		phone: cord.info.phone,
-		location: cord.info.location,
-		type: cord.info.type,
-		sub: cord.name,
-	}));
-	// webGl renderer and globe configs
-	renderer(gData);
-	// listening to window resize to resize the globe
-	resizer();
-	window.addEventListener("resize", () => {
-		resizer();
-	});
-
-	if (navigator.geolocation) {
-		navigator.geolocation.getCurrentPosition(
-			(position) => {
-				const userLat = position.coords.latitude;
-				const userLon = position.coords.longitude;
-				const closestOffice = findClosestOffice(userLat, userLon, cords);
-				console.log(`The closest office is in ${closestOffice.name}`);
-				world.pointOfView({
-					lat: closestOffice.lat,
-					lng: closestOffice.long,
+	fetch("https://sca.lucidly.dev/wp-json/custom/v1/options")
+		.then(async (res) => {
+			console.log(res);
+			const data = await res.json();
+			console.log(data.contact);
+			renderButtons(data.contact);
+			renderSelect(data.contact);
+			const gData = data.contact.map((cord) => ({
+				lat: cord.latitude,
+				lng: cord.longitude,
+				size: 30,
+				color: COLOR_CURSOR,
+				flag: cord.icon,
+				name: cord.name,
+				email: cord.email,
+				phone: cord.phone,
+				location: cord.location.title,
+				type: cord.type,
+				sub: cord.name,
+			}));
+			renderer(gData);
+			resizer();
+			window.addEventListener("resize", () => {
+				world.resumeAnimation();
+				document.querySelectorAll(".infoButton").forEach((btn) => {
+					btn.classList.remove("infoButton_isActive");
 				});
-				handleUpdateGlobe({ lat: closestOffice.lat, lng: closestOffice.long });
-			},
-			(error) => {
-				console.error("Error getting location:", error);
-			}
-		);
-	} else {
-		console.log("Geolocation is not supported by this browser.");
-	}
+				handleUpdateGlobe({ lat: 0, lng: 0 });
+				resizer();
+			});
 
-	mapButtons();
-	mapOptions();
+			if (navigator.geolocation) {
+				navigator.geolocation.getCurrentPosition(
+					(position) => {
+						const userLat = position.coords.latitude;
+						const userLon = position.coords.longitude;
+						const closestOffice = findClosestOffice(userLat, userLon, cords);
+						console.log(`The closest office is in ${closestOffice.name}`);
+						world.pointOfView({
+							lat: closestOffice.lat,
+							lng: closestOffice.long,
+						});
+						handleUpdateGlobe({
+							lat: closestOffice.lat,
+							lng: closestOffice.long,
+						});
+					},
+					(error) => {
+						console.error("Error getting location:", error);
+					}
+				);
+			} else {
+				console.log("Geolocation is not supported by this browser.");
+			}
+
+			mapButtons();
+			mapOptions();
+		})
+		.catch((err) => {
+			console.log(err);
+		});
 };
 
 // todo add data here
-init([
-	{
-		lat: 40.71427,
-		long: -74.00597,
-		name: "New York",
-		info: {
-			country: {
-				name: "United States of America",
-				flag: "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/US.svg",
-			},
-			type: "Headquarters",
-			phone: "+1 123 123 123",
-			email: "us.a@scagroup.net",
-			location: "New York, United States of America",
-		},
-	},
-	{
-		lat: 25.0657,
-		long: 55.17128,
-		name: "Dubai",
-		info: {
-			country: {
-				name: "United Arab Emirates",
-				flag: "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/AE.svg",
-			},
-			type: "Headquarters",
-			phone: "+1 123 123 123",
-			email: "ae.a@scagroup.net",
-			location: "Dubai, UAE",
-		},
-	},
-	{
-		lat: 45.46427,
-		long: 9.18951,
-		name: "Milan",
-		info: {
-			country: {
-				name: "Italy",
-				flag: "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/IT.svg",
-			},
-			type: "Headquarters",
-			phone: "+1 123 123 123",
-			email: "it.a@scagroup.net",
-			location: "Milan, Italy",
-		},
-	},
-	{
-		lat: 50.11552,
-		long: 8.68417,
-		name: "Frankfurt",
-		info: {
-			country: {
-				name: "Germany",
-				flag: "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/DE.svg",
-			},
-			type: "Headquarters",
-			phone: "+1 123 123 123",
-			email: "de.a@scagroup.net",
-			location: "Frankfurt, Germany",
-		},
-	},
-	{
-		lat: 51.50853,
-		long: -0.12574,
-		name: "London",
-		info: {
-			country: {
-				name: "United Kingdom",
-				flag: "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/GB.svg",
-			},
-			type: "Headquarters",
-			phone: "+1 123 123 123",
-			email: "de.a@scagroup.net",
-			location: "London, United Kingdom",
-		},
-	},
-	{
-		lat: 55.75222,
-		long: 37.61556,
-		name: "Moscow",
-		info: {
-			country: {
-				name: "Russia",
-				flag: "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/RU.svg",
-			},
-			type: "Headquarters",
-			phone: "+1 123 123 123",
-			email: "ru.a@scagroup.net",
-			location: "Moscow, Russia",
-		},
-	},
-	{
-		lat: -33.8688,
-		long: 151.2093,
-		name: "Sidney",
-		info: {
-			country: {
-				name: "Australia",
-				flag: "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/AU.svg",
-			},
-			type: "Headquarters",
-			phone: "+1 123 123 123",
-			email: "au.a@scagroup.net",
-			location: "Sidney, Australia",
-		},
-	},
-]);
+init();
