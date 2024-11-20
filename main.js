@@ -502,10 +502,10 @@ const init = (cords) => {
 			resizer();
 			window.addEventListener("resize", () => {
 				world.resumeAnimation();
-				document.querySelectorAll(".infoButton").forEach((btn) => {
-					btn.classList.remove("infoButton_isActive");
-				});
-				handleUpdateGlobe({ lat: 0, lng: 0 });
+				// document.querySelectorAll(".infoButton").forEach((btn) => {
+				// 	btn.classList.remove("infoButton_isActive");
+				// });
+				// handleUpdateGlobe({ lat: 0, lng: 0 });
 				resizer();
 			});
 
