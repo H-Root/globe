@@ -128,6 +128,15 @@
 
 	@media (min-width: 768px) {
 		display: grid;
+		padding-left: 20px;
+	}
+
+	@media (min-width: 1024px) {
+		padding-left: 40px;
+	}
+
+	@media (min-width: 1280px) {
+		padding-left: 60px;
 	}
 
 	.go-btn {
@@ -161,17 +170,16 @@
 #fill-select {
 	background-color: transparent;
 	padding: 7.5px 16px;
-	color: #00377B;
-	border: 1px solid #00377B;
+	color: #00377b;
+	border: 1px solid #00377b;
 
 	&:after {
 		right: 16px;
 	}
 
 	option {
-
 	}
-	
+
 	@media (min-width: 768px) {
 		display: none;
 	}

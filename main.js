@@ -165,13 +165,15 @@ const handleUpdateGlobe = (d = { lat: 0, lng: 0 }) => {
 const resizer = () => {
 	if (window.innerWidth < 768) {
 		world.width(window.innerWidth);
-		world.height(window.innerHeight / 2);
+		world.height(window.innerHeight / 2 + 100);
 		world.pointOfView({
 			altitude: ALTITUDE,
 		});
 		ALTITUDE = 2;
 	} else {
-		if (window.innerWidth < 1067) {
+		if (window.innerWidth < 900) {
+			ALTITUDE = 3;
+		} else if (window.innerWidth < 1100) {
 			ALTITUDE = 2.5;
 		} else {
 			ALTITUDE = 2;
@@ -393,7 +395,7 @@ const mapOptions = () => {
 			name: e.target.selectedOptions[0].getAttribute("data-name"),
 		};
 
-		handleToggleMenus(temp)
+		handleToggleMenus(temp);
 
 		if (selected.lat === temp.lat && selected.lng === temp.lng) {
 			world.pointOfView(
