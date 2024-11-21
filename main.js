@@ -21,6 +21,8 @@ const FOCUSED_HEIGHT = 0.007;
 const UN_FOCUS_HEIGHT = 0.007;
 let ALTITUDE = 2;
 
+const globe = document.getElementById("globe_wrapper");
+
 // Elements
 // ? Me: Mama I want React.js
 // & Mama: We Have React.js At Home
@@ -94,35 +96,6 @@ const Select = (lat, lng, name) => `
 `;
 //#endregion Elements
 
-function getDistance(lat1, lon1, lat2, lon2) {
-	const R = 6371;
-	const dLat = (lat2 - lat1) * (Math.PI / 180);
-	const dLon = (lon2 - lon1) * (Math.PI / 180);
-	const a =
-		Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-		Math.cos(lat1 * (Math.PI / 180)) *
-			Math.cos(lat2 * (Math.PI / 180)) *
-			Math.sin(dLon / 2) *
-			Math.sin(dLon / 2);
-	const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-	return R * c;
-}
-
-function findClosestOffice(userLat, userLon, cords) {
-	let closestOffice = null;
-	let minDistance = Infinity;
-
-	for (const office of cords) {
-		const distance = getDistance(userLat, userLon, office.lat, office.long);
-		if (distance < minDistance) {
-			minDistance = distance;
-			closestOffice = office;
-		}
-	}
-
-	return closestOffice;
-}
-
 const handleUpdateGlobe = (d = { lat: 0, lng: 0 }) => {
 	world
 		.polygonAltitude((dd) => {
@@ -157,6 +130,7 @@ const handleUpdateGlobe = (d = { lat: 0, lng: 0 }) => {
 // ! don't forget to set world width and height accordingly
 // & ALTITUDE is the the how far is the camera from the globe
 const resizer = () => {
+	console.log(globe.clientWidth);
 	if (window.innerWidth < 768) {
 		world.width(window.innerWidth);
 		world.height(window.innerHeight / 2 + 100);
@@ -503,30 +477,6 @@ const init = (cords) => {
 				world.resumeAnimation();
 				resizer();
 			});
-
-			if (navigator.geolocation) {
-				navigator.geolocation.getCurrentPosition(
-					(position) => {
-						const userLat = position.coords.latitude;
-						const userLon = position.coords.longitude;
-						const closestOffice = findClosestOffice(userLat, userLon, cords);
-						console.log(`The closest office is in ${closestOffice.name}`);
-						world.pointOfView({
-							lat: closestOffice.lat,
-							lng: closestOffice.long,
-						});
-						handleUpdateGlobe({
-							lat: closestOffice.lat,
-							lng: closestOffice.long,
-						});
-					},
-					(error) => {
-						console.error("Error getting location:", error);
-					}
-				);
-			} else {
-				console.log("Geolocation is not supported by this browser.");
-			}
 
 			mapButtons();
 			mapOptions();
