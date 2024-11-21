@@ -477,7 +477,6 @@ const mapOptions = () => {
 };
 
 const init = (cords) => {
-	// render navigate around the world buttons
 	fetch("https://sca.lucidly.dev/wp-json/custom/v1/options")
 		.then(async (res) => {
 			console.log(res);
@@ -502,10 +501,6 @@ const init = (cords) => {
 			resizer();
 			window.addEventListener("resize", () => {
 				world.resumeAnimation();
-				// document.querySelectorAll(".infoButton").forEach((btn) => {
-				// 	btn.classList.remove("infoButton_isActive");
-				// });
-				// handleUpdateGlobe({ lat: 0, lng: 0 });
 				resizer();
 			});
 
@@ -541,5 +536,4 @@ const init = (cords) => {
 		});
 };
 
-// todo add data here
 init();
